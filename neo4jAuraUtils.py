@@ -41,8 +41,7 @@ def read_neo4j_properties(NEO4J_PROPERTIES_FILE: str = None) -> tuple:
         print(f"""Using AURA_API, AURA_URL, AURA_TOKEN_URL, AURA_API_CLIENT_ID, AURA_CLIENT_SECRET from {NEO4J_PROPERTIES_FILE} file""")
         return aura_api, aura_url, aura_token_url, aura_api_client_id, aura_client_secret
     else:  # assume using local database
-        print('Could not find database properties file, using defaults:')
-        print('Nothing to do here!')
+        print("Awww... Snap!\nERROR: Could not find database properties file: {NEO4J_PROPERTIES_FILE} ")
 
 
 def aura_set_request_header(aura_api_client_id, aura_client_secret, aura_token_url) -> dict:
@@ -125,9 +124,10 @@ def aura_request_state_change(new_state, inst_info):
 
     return
 
-def aura_api_connect() -> dict :
-    AURA_API, AURA_URL, AURA_TOKEN_URL, AURA_API_CLIENT_ID, AURA_CLIENT_SECRET = read_neo4j_properties(
-        'neo4jConfig.ini')
+def aura_api_connect(dot_ini_file = 'neo4jConfig.ini') -> dict :
+    # need to provide the file name that contains the values for the AURA_* variable values
+    AURA_API, AURA_URL, AURA_TOKEN_URL, AURA_API_CLIENT_ID, AURA_CLIENT_SECRET = \
+        read_neo4j_properties(dot_ini_file)
     aura_headers = aura_set_request_header(AURA_API_CLIENT_ID, AURA_CLIENT_SECRET, AURA_TOKEN_URL)
     inst_id = aura_inst_id(AURA_URL)
     return aura_inst_info(AURA_API, inst_id, aura_headers)
