@@ -115,17 +115,18 @@ def aura_request_state_change(new_state, inst_info):
     if inst_info['status'] == new_state:
         print("Instance '%s' (id: '%s') is already '%s'." % (inst_info['name'], inst_info['id'], inst_info['status']))
     elif new_state == "running" and inst_info['status'] == "paused":
+        # put in checks to see if gds or cypher queries are running before allowing shutdown.
         aura_change_state(new_state, "resume", inst_info)
     elif new_state == "paused" and inst_info['status'] == "running":
         # make sure that nobody is running anything. it's not in the code
         aura_change_state(new_state, "pause", inst_info)
     else :     # only accept certain combinations of pausing and running
         print("Can only change instance state from 'running' to 'paused', or 'paused' to 'running'.")
-
     return
 
 def aura_api_connect(dot_ini_file = 'neo4jConfig.ini') -> dict :
     # need to provide the file name that contains the values for the AURA_* variable values
+    # other options are to check for environment variables to get the Aura credentials.
     AURA_API, AURA_URL, AURA_TOKEN_URL, AURA_API_CLIENT_ID, AURA_CLIENT_SECRET = \
         read_neo4j_properties(dot_ini_file)
     aura_headers = aura_set_request_header(AURA_API_CLIENT_ID, AURA_CLIENT_SECRET, AURA_TOKEN_URL)
